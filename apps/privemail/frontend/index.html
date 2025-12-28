@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privemail Setup</title>
+    <link rel="stylesheet" href="/static/css/base.css">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f3f4f6; }
+        .wizard-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        .step { display: none; }
+        .step.active { display: block; }
+        h1 { color: #111827; margin-bottom: 10px; }
+        p { color: #6b7280; margin-bottom: 20px; line-height: 1.5; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #1d4ed8; }
+        button:disabled { background: #9ca3af; cursor: not-allowed; }
+        .secondary-btn { background: white; color: #374151; border: 1px solid #d1d5db; margin-top: 10px; }
+        .secondary-btn:hover { background: #f9fafb; }
+    </style>
+</head>
+<body>
+
+<div class="wizard-card">
+    
+    <div id="step-1" class="step active">
+        <h1>Welcome to Privemail</h1>
+        <p>Your local, private AI email assistant.</p>
+        <p>This wizard will help you set up your encryption, connect to Google, and select your AI model.</p>
+        <button onclick="nextStep(2)">Get Started</button>
+    </div>
+
+    <div id="step-2" class="step">
+        <h1>Create Password</h1>
+        <p>Set a Master Password. This will be used to encrypt your database locally.</p>
+        <input type="password" id="master-pass" placeholder="Enter a strong password">
+        <button onclick="handlePasswordStep()">Next</button>
+    </div>
+
+    <div id="step-3" class="step">
+        <h1>Connect Gmail</h1>
+        <p>We need to authorize Privemail to access your Gmail account.</p>
+        <p style="background: #fff7ed; color: #c2410c; padding: 10px; border-radius: 4px; font-size: 0.9em;">
+            ⚠️ A browser window will open. Please sign in and verify permissions.
+        </p>
+        <button onclick="triggerGoogleAuth()" id="btn-auth">Authorize Google</button>
+        <button class="secondary-btn" onclick="nextStep(4)">Skip (I have token.json)</button>
+    </div>
+
+    <div id="step-4" class="step">
+        <h1>Select AI Model</h1>
+        <p>Choose the local AI model to power your assistant.</p>
+        <select id="model-select">
+            <option>Loading models...</option>
+        </select>
+        <button onclick="finishSetup()" id="btn-finish">Finish Setup</button>
+    </div>
+
+</div>
+
+<script>
+    let masterPassword = "";
+
+    function nextStep(stepNum) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById(`step-${stepNum}`).classList.add('active');
+        
+        if(stepNum === 4) loadModels();
+    }
+
+    function handlePasswordStep() {
+        const pass = document.getElementById('master-pass').value;
+        if(!pass || pass.length < 4) {
+            alert("Please enter a password (min 4 chars).");
+            return;
+        }
+        masterPassword = pass;
+        nextStep(3);
+    }
+
+    async function triggerGoogleAuth() {
+        const btn = document.getElementById('btn-auth');
+        btn.textContent = "Waiting for Google...";
+        btn.disabled = true;
+        
+        // We trigger a fetch to a protected endpoint or just check status
+        // Since the auth flow is backend-driven by missing token, we hit the inbox API
+        // which will trigger the browser popup on the server side.
+        try {
+            // This call is expected to "fail" or hang while browser opens
+            fetch('/api/setup/auth').catch(e => console.log("Auth triggered"));
+            
+            // Poll for token file existence
+            let checks = 0;
+            const interval = setInterval(async () => {
+                const res = await fetch('/api/setup/status');
+                const data = await res.json();
+                if(data.google_connected) {
+                    clearInterval(interval);
+                    btn.textContent = "Connected!";
+                    btn.style.background = "#10b981";
+                    setTimeout(() => nextStep(4), 1000);
+                }
+                checks++;
+                if(checks > 60) { clearInterval(interval); btn.textContent = "Retry"; btn.disabled = false; }
+            }, 2000);
+
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    async function loadModels() {
+        try {
+            const res = await fetch('/api/models');
+            const models = await res.json();
+            const select = document.getElementById('model-select');
+            select.innerHTML = '';
+            models.forEach(m => {
+                select.add(new Option(m, m));
+            });
+        } catch(e) {
+            document.getElementById('model-select').innerHTML = '<option>Error loading models</option>';
+        }
+    }
+
+    async function finishSetup() {
+        const btn = document.getElementById('btn-finish');
+        btn.textContent = "Initializing...";
+        btn.disabled = true;
+
+        const model = document.getElementById('model-select').value;
+
+        try {
+            const res = await fetch('/api/setup/complete', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    master_password: masterPassword,
+                    model_name: model
+                })
+            });
+
+            if(res.ok) {
+                window.location.reload(); // Should redirect to App
+            } else {
+                throw new Error("Setup failed");
+            }
+        } catch(e) {
+            alert("Setup failed. Check console.");
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>

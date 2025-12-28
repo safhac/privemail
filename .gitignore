@@ -1,0 +1,52 @@
+# Virtual Environment
+venv/
+*.pyc
+__pycache__/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+
+module_tests
+app.db
+app_data/
+credentials.json
+token.json
+
+# tests
+
+testing/
+
+# builds
+
+build/
+dist/
+Output/
+privemail.spec.old
+setup_assets/
+
+# licensing
+admin_keygen.py
+apps/legal_duck/license.key
+
+# vault
+apps/legal_duck/vault.json
+
+# Ignore User Data
+apps/legal_duck/vault.json
+apps/legal_duck/license.key
+apps/legal_duck/docs/*.docx
+!apps/legal_duck/docs/.gitkeep
+
+# local builds
+
+concatenated_source.txt
+frontend.txt
+reset_env.bat
+build.ps1
+combine.py
+combine-fe.py
+publish_privemail.py
+setup_sim.py
+migrate_structure.py

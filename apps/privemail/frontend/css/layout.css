@@ -1,0 +1,22 @@
+#app-body {
+    display: grid;
+    grid-template-columns: 260px 1fr 340px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Base Panel Styles */
+nav, header { 
+    background: var(--bg-panel); 
+    height: 100vh; 
+    border-right: 1px solid var(--border); 
+}
+
+#main-content-area { 
+    padding: 0; 
+    background-color: var(--bg-panel); 
+    height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+}
