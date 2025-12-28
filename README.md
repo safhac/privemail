@@ -5,7 +5,7 @@
 ## 📥 Download Installer
 Support the development of Privemail by purchasing the official Windows Installer. It comes pre-compiled, signed, and ready to use.
 
-[**👉 Buy Privemail for Windows**](LINK_TO_YOUR_GUMROAD_OR_WEBSITE)
+[**👉 Buy Privemail for Windows**](https://safhacster.gumroad.com/l/bnnpg)
 
 ---
 
@@ -19,7 +19,7 @@ If you are a developer, you can build Privemail yourself for free.
 ### Installation
 1.  Clone the repo:
     ```bash
-    git clone [https://github.com/YOUR_USER/privemail.git](https://github.com/YOUR_USER/privemail.git)
+    git clone https://github.com/safhac/privemail
     cd privemail
     ```
 2.  Install dependencies:
@@ -36,13 +36,13 @@ If you are a developer, you can build Privemail yourself for free.
 
 ### Windows Installer (Paid)
 Support the project by buying the compiled installer.
-[**👉 Buy on Gumroad**](LINK)
+[**👉 Buy on Gumroad**](https://safhacster.gumroad.com/l/bnnpg)
 
 **Note on Windows SmartScreen:**
 Because Privemail is an independent open-source project, we do not have a corporate signing certificate from Microsoft.
 * Windows may flag the installer as an "Unrecognized App".
 * This is normal. Click **"More Info"** $\rightarrow$ **"Run Anyway"** to install.
-* You can verify the safety of the installer by checking the [Source Code](LINK_TO_GITHUB) or comparing the SHA-256 hash below.
+* You can verify the safety of the installer by checking the [Source Code](https://github.com/safhac/privemail) or comparing the SHA-256 hash below.
 
 **SHA-256 Checksum:**
 `[PASTE_YOUR_HASH_HERE]`
