@@ -45,8 +45,7 @@ concatenated_source.txt
 frontend.txt
 reset_env.bat
 build.ps1
-combine.py
-combine-fe.py
+concatenate_project_files.py
 publish_privemail.py
 setup_sim.py
 migrate_structure.py
