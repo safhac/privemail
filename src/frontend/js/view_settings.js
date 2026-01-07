@@ -79,7 +79,7 @@ export async function renderSettingsView(container) {
                 <textarea id="set-prompt" style="width: 100%; height: 150px; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">${systemPrompt}</textarea>
             </div>
 
-<div class="settings-section" style="margin-bottom: 30px; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px;">
+            <div class="settings-section" style="margin-bottom: 30px; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px;">
                 <h3>🤖 AI Engine Configuration</h3>
                 <p style="color:#666; font-size: 0.9em;">Connect to Ollama, LM Studio, or any OpenAI-compatible API.</p>
                 
@@ -165,12 +165,16 @@ export async function renderSettingsView(container) {
         btn.textContent = "Saving...";
         btn.disabled = true;
 
-        const updates = [
+        cconst updates = [
             { key: "scan_interval", value: (parseInt(document.getElementById('set-interval').value) * 60).toString() },
             { key: "system_prompt_template", value: document.getElementById('set-prompt').value },
-            { key: "license_key", value: document.getElementById('set-license').value },
             { key: "manual_mode", value: document.getElementById('chk-manual-mode').checked.toString() },
-            { key: "include_signature", value: document.getElementById('chk-signature').checked.toString() }
+            { key: "include_signature", value: document.getElementById('chk-signature').checked.toString() },
+
+            // NEW: AI Settings
+            { key: "ai_provider", value: document.getElementById('set-ai-provider').value },
+            { key: "ai_base_url", value: document.getElementById('set-ai-base-url').value },
+            { key: "ai_api_key", value: document.getElementById('set-ai-api-key').value }
         ];
 
         try {
