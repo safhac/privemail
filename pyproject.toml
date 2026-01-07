@@ -15,6 +15,7 @@ dependencies = [
     "requests",
     "httpx",
     "python-multipart>=0.0.21",
+    "psutil>=7.2.1",
 ]
 
 [tool.uv]

@@ -4,7 +4,7 @@ import logging
 import ollama
 from typing import Tuple
 from httpx import ConnectError
-from .base import client, _get_config
+from .base import _get_config
 from core.config import MODEL_REQUIREMENTS, DEFAULT_MODEL_REQ
 
 
