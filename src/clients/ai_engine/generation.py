@@ -1,7 +1,7 @@
 import json
 import logging
 from typing import Dict, Any
-from .base import chat_completion, AI_LOCK
+from .base import chat_completion, AI_LOCK, _get_config
 import ollama
 from models.schemas import GenerationRequest
 from database.db import Contact
@@ -76,7 +76,7 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
         "correspondent_goal": "Analysis Failed",
         "correspondent_evidence": "Could not parse LLM response"
     }
-    async with OLLAMA_LOCK:
+    async with AI_LOCK:
         logging.info("OLLAMA_LOCK acquired by analyze_correspondent()")
         try:
             response = await chat_completion(
