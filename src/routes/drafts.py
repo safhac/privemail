@@ -113,7 +113,7 @@ async def confirm_draft(draft_id: int, db: Session = Depends(get_db)):
 @router.post("/{draft_id}/send")
 async def send_draft(
     draft_id: int,
-    mode: str = Query("draft", regex="^(draft|send)$"),
+    mode: str = Query("draft", pattern="^(draft|send)$"),
     db: Session = Depends(get_db)
 ):
     draft = db.query(Draft).options(joinedload(Draft.email)
