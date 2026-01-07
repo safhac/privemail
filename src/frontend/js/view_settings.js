@@ -165,7 +165,7 @@ export async function renderSettingsView(container) {
         btn.textContent = "Saving...";
         btn.disabled = true;
 
-        cconst updates = [
+        const updates = [
             { key: "scan_interval", value: (parseInt(document.getElementById('set-interval').value) * 60).toString() },
             { key: "system_prompt_template", value: document.getElementById('set-prompt').value },
             { key: "manual_mode", value: document.getElementById('chk-manual-mode').checked.toString() },
