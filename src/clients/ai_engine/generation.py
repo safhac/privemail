@@ -2,6 +2,7 @@ import json
 import logging
 from typing import Dict, Any
 from .base import chat_completion, AI_LOCK
+import ollama
 from models.schemas import GenerationRequest
 from database.db import Contact
 from core.config import DEFAULT_OLLAMA_MODEL
