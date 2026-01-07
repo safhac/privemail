@@ -1,10 +1,11 @@
 import json
 import logging
 from typing import Dict, Any
-from .base import client, OLLAMA_LOCK
+from .base import chat_completion, AI_LOCK
 from models.schemas import GenerationRequest
 from database.db import Contact
 from core.config import DEFAULT_OLLAMA_MODEL
+
 
 async def generate_text(request: GenerationRequest) -> str:
     system_prompt = f"""
@@ -34,9 +35,10 @@ async def generate_text(request: GenerationRequest) -> str:
         finally:
             logging.info(f"OLLAMA_LOCK released by generate_text()")
 
+
 async def rewrite_paragraph_for_tone(
     system_prompt: str,
-    paragraph: str, 
+    paragraph: str,
     model: str = DEFAULT_OLLAMA_MODEL
 ) -> str:
     async with OLLAMA_LOCK:
@@ -54,7 +56,9 @@ async def rewrite_paragraph_for_tone(
             logging.error(f"Error rewriting text: {e}")
             return f"Error rewriting text: {str(e)}"
         finally:
-            logging.info(f"OLLAMA_LOCK released by rewrite_paragraph_for_tone()")
+            logging.info(
+                f"OLLAMA_LOCK released by rewrite_paragraph_for_tone()")
+
 
 async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
     system_prompt = f"""
@@ -75,7 +79,7 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
         logging.info("OLLAMA_LOCK acquired by analyze_correspondent()")
         try:
             response = await client.chat(
-                model=DEFAULT_OLLAMA_MODEL, 
+                model=DEFAULT_OLLAMA_MODEL,
                 messages=[
                     {'role': 'system', 'content': system_prompt},
                     {'role': 'user', 'content': email_body}
@@ -84,15 +88,18 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
                 format="json"
             )
             raw_response = response['message']['content']
-            logging.info("OLLAMA_CLIENT: Analysis received, attempting to parse JSON.")
+            logging.info(
+                "OLLAMA_CLIENT: Analysis received, attempting to parse JSON.")
             analysis_result = json.loads(raw_response)
             if all(key in analysis_result for key in default_response.keys()):
                 return analysis_result
             else:
-                logging.warning("OLLAMA_CLIENT: Analysis JSON missing required keys.")
+                logging.warning(
+                    "OLLAMA_CLIENT: Analysis JSON missing required keys.")
                 return default_response
         except json.JSONDecodeError:
-            logging.error(f"OLLAMA_CLIENT: Failed to decode JSON from response: {raw_response}")
+            logging.error(
+                f"OLLAMA_CLIENT: Failed to decode JSON from response: {raw_response}")
             return default_response
         except Exception as e:
             logging.error(f"Error in analyze_correspondent: {e}")
@@ -100,13 +107,15 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
         finally:
             logging.info("OLLAMA_LOCK released by analyze_correspondent()")
 
+
 async def generate_draft_reply(
-    context: str, 
-    contact: Contact, 
+    context: str,
+    contact: Contact,
     style_sample_text: str = None
 ) -> str | None:
     if not contact.auto_draft_enabled:
-        logging.info(f"OLLAMA_CLIENT: Auto-draft disabled for {contact.email_address}. Skipping generation.")
+        logging.info(
+            f"OLLAMA_CLIENT: Auto-draft disabled for {contact.email_address}. Skipping generation.")
         return None
 
     style_prompt = "Your response must have a Formal Professional style."
@@ -129,14 +138,14 @@ async def generate_draft_reply(
     
     Respond with *only* the draft.
     """
-    
+
     user_content = f"""
     Here is the email to reply to:
     ---
     {context}
     ---
     """
-    
+
     async with OLLAMA_LOCK:
         logging.info("OLLAMA_LOCK acquired by generate_draft_reply()")
         try:
