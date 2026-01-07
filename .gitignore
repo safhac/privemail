@@ -26,7 +26,7 @@ Output/
 privemail.spec.old
 setup_assets/
 scripts/
-
+*.egg-info/
 # licensing
 admin_keygen.py
 apps/legal_duck/license.key
