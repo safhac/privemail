@@ -42,6 +42,7 @@ apps/legal_duck/docs/*.docx
 
 # local builds
 
+src/core/private_constants.py
 reset_env.bat
 build.ps1
 setup_sim.py

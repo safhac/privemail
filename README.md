@@ -1,61 +1,80 @@
 # Privemail
 
-**Privemail** is an open-source, local-first email client designed for privacy and speed.
+**A private, local-first AI email assistant.**
 
-## 📥 Download Installer
-Support the development of Privemail by purchasing the official Windows Installer. It comes pre-compiled, signed, and ready to use.
-
-[**👉 Buy Privemail for Windows**](https://safhacster.gumroad.com/l/bnnpg)
+Privemail runs entirely on your machine. It connects to Gmail, downloads your messages to a local encrypted database, and uses local LLMs (via Ollama) to draft replies, analyze tone, and prioritize your inbox—keeping your data 100% private.
 
 ---
 
-## 🛠️ Building from Source (Free)
-If you are a developer, you can build Privemail yourself for free.
+### 📥 Download & Support
+**Not a developer?** You can support the project by purchasing the pre-compiled installer. It includes everything pre-configured (no Python or terminal required).
 
-### Prerequisites
-* Python 3.12+
-* Your own Google Cloud Credentials (`credentials.json`)
+[ **Download Installer for Windows/Mac ($10)** ](https://your-website-link-here)
 
-### Installation
-1.  Clone the repo:
+*Building from source is free (see below).*
+
+---
+
+## 🚀 Features
+
+* **Zero Data Leakage**: Uses local AI models (Ollama). No data is sent to OpenAI or third parties.
+* **Smart Prioritization**: AI analyzes email tone and urgency to score your inbox locally.
+* **Draft & Edit**: The AI proposes drafts based on your goals; you refine them before sending.
+* **Google Sync**: Connects securely to Gmail via OAuth.
+
+## 📂 Project Structure
+
+This project uses a standard `src` layout:
+
+* `src/`: Application source code (`routes`, `database`, `core` logic).
+* `app_data/`: Stores your local database (`app.db`) and secrets.
+* `scripts/`: Maintenance and build scripts.
+
+## 🛠️ Prerequisites
+
+1.  **Python 3.10+**
+2.  **[Ollama](https://ollama.com/)**: Required for AI features.
+    * Install Ollama and run `ollama serve` in a terminal.
+    * Pull the default model:
+        ```bash
+        ollama pull qwen2.5:3b
+        ```
+
+## 📦 Installation (Build from Source)
+
+1.  **Clone the repository**
     ```bash
-    git clone https://github.com/safhac/privemail
+    git clone [https://github.com/yourusername/privemail.git](https://github.com/yourusername/privemail.git)
     cd privemail
     ```
-2.  Install dependencies:
+
+2.  **Create a Virtual Environment**
+    ```bash
+    python -m venv venv
+    # Windows:
+    .\venv\Scripts\activate
+    # Mac/Linux:
+    source venv/bin/activate
+    ```
+
+3.  **Install Dependencies**
     ```bash
     pip install -r requirements.txt
     ```
-3.  Add your `credentials.json` to `apps/privemail/`.
-4.  Run the app:
-    ```bash
-    python -m apps.privemail.main
-    ```
 
-## 📥 Installation
+## 🔑 Configuration (Google OAuth)
 
-### Windows Installer (Paid)
-Support the project by buying the compiled installer.
-[**👉 Buy on Gumroad**](https://safhacster.gumroad.com/l/bnnpg)
+To access your Gmail, you need a `credentials.json` file from Google Cloud.
 
-**Note on Windows SmartScreen:**
-Because Privemail is an independent open-source project, we do not have a corporate signing certificate from Microsoft.
-* Windows may flag the installer as an "Unrecognized App".
-* This is normal. Click **"More Info"** $\rightarrow$ **"Run Anyway"** to install.
-* You can verify the safety of the installer by checking the [Source Code](https://github.com/safhac/privemail) or comparing the SHA-256 hash below.
+1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2.  Create a project and enable the **Gmail API** and **People API**.
+3.  Configure the OAuth Consent Screen (Add `http://localhost:8080/` as a Redirect URI).
+4.  Create Credentials (**OAuth Client ID** -> **Desktop App**).
+5.  Download the JSON file, rename it to `credentials.json`, and place it in the **project root** folder.
 
-**SHA-256 Checksum:**
-`[PASTE_YOUR_HASH_HERE]`
+## ▶️ Running the App
 
+Once setup is complete, run the launcher script from the root directory:
 
-## 🔐 Zero-Trust & BYOK (Bring Your Own Key)
-Privemail is built on a **Zero-Trust** architecture. Unlike other email clients that route your data through their servers, Privemail connects directly from your machine to Gmail.
-
-To ensure total privacy, **we do not bundle shared API keys**.
-* You must provide your own Google Cloud "Client ID" and "Secret".
-* This ensures **we can never access your account**, even if we wanted to.
-* It takes about 2 minutes to set up. [**👉 Read the Setup Guide**](LINK_TO_SETUP_GUIDE)
-
-
-## 📄 License
-This project is licensed under the **GNU General Public License v3.0**.
+```bash
+python src/launcher.py
