@@ -53,27 +53,12 @@ async def list_installed_models() -> List[str]:
 
 
 async def list_local_models(selected_model: str) -> List[ModelItem]:
-    try:
-        response = await client.list()
-        model_items = []
-        models_list = response.get('models', response)
-
-        for model in models_list:
-            name = model['model']
-            is_sel = (name == selected_model)
-            color = "Green" if is_sel else "Dark Grey"
-
-            model_items.append(ModelItem(
-                name=name,
-                is_installed=True,
-                is_selected=is_sel,
-                status_color=color
-            ))
-
-        logging.debug(f"Successfully processed {len(model_items)} models.")
-        return model_items
-
-    except Exception as e:
-        logging.error(
-            f"CRITICAL ERROR during model list processing: {e}", file=sys.stderr)
-        return []
+    models = await list_installed_models()
+    return [
+        ModelItem(
+            name=m,
+            is_installed=True,
+            is_selected=(m == selected_model),
+            status_color="Green" if m == selected_model else "Dark Grey"
+        ) for m in models
+    ]
