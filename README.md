@@ -40,12 +40,17 @@ This project uses a standard `src` layout:
         ollama pull qwen2.5:3b
         ```
 
-## 📦 Installation (New!)
-1. Install [uv](https://github.com/astral-sh/uv).
-2. Run the app:
-   ```bash
-   uv run src/launcher.py
+## 📦 Installation (Source)
+
+1.  **Install uv** (An extremely fast Python package manager)
+    * Mac/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+    * Windows: `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"`
+
+2.  **Run the App**
+    ```bash
+    uv run src/launcher.py
     ```
+    *(This command will automatically create the virtual environment, install all dependencies, and launch the app in one step.)*
 
     
 
