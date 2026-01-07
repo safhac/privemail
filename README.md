@@ -40,27 +40,14 @@ This project uses a standard `src` layout:
         ollama pull qwen2.5:3b
         ```
 
-## 📦 Installation (Build from Source)
-
-1.  **Clone the repository**
-    ```bash
-    git clone [https://github.com/yourusername/privemail.git](https://github.com/yourusername/privemail.git)
-    cd privemail
+## 📦 Installation (New!)
+1. Install [uv](https://github.com/astral-sh/uv).
+2. Run the app:
+   ```bash
+   uv run src/launcher.py
     ```
 
-2.  **Create a Virtual Environment**
-    ```bash
-    python -m venv venv
-    # Windows:
-    .\venv\Scripts\activate
-    # Mac/Linux:
-    source venv/bin/activate
-    ```
-
-3.  **Install Dependencies**
-    ```bash
-    pip install -r requirements.txt
-    ```
+    
 
 ## 🔑 Configuration (Google OAuth)
 

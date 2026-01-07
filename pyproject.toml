@@ -1,0 +1,20 @@
+[project]
+name = "privemail"
+version = "1.2.0"
+description = "Local-first AI email client"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "sqlalchemy",
+    "google-auth-oauthlib",
+    "google-api-python-client",
+    "ollama",
+    "vobject",
+    "requests",
+    "httpx"
+]
+
+[tool.uv]
+package = true
