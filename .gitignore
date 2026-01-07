@@ -37,7 +37,7 @@ apps/legal_duck/license.key
 
 # vault
 apps/legal_duck/vault.json
-
+src/credentials.json
 # Ignore User Data
 apps/legal_duck/vault.json
 apps/legal_duck/license.key
