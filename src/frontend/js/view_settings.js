@@ -79,20 +79,36 @@ export async function renderSettingsView(container) {
                 <textarea id="set-prompt" style="width: 100%; height: 150px; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">${systemPrompt}</textarea>
             </div>
 
-            <div class="settings-section" style="margin-bottom: 30px; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px;">
-                <h3>🔑 Account & License</h3>
+<div class="settings-section" style="margin-bottom: 30px; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px;">
+                <h3>🤖 AI Engine Configuration</h3>
+                <p style="color:#666; font-size: 0.9em;">Connect to Ollama, LM Studio, or any OpenAI-compatible API.</p>
                 
-                <div style="margin-bottom: 20px;">
-                    <label style="font-weight:bold; display:block; margin-bottom:5px;">License Key:</label>
-                    <input type="text" id="set-license" value="${licenseKey}" placeholder="ENTER-KEY-HERE" style="width: 100%; padding: 8px;">
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight:bold; display:block; margin-bottom:5px;">Provider Type:</label>
+                    <select id="set-ai-provider" style="width:100%; padding:8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="ollama" ${aiProvider === 'ollama' ? 'selected' : ''}>Ollama (Local Native)</option>
+                        <option value="openai_compatible" ${aiProvider === 'openai_compatible' ? 'selected' : ''}>OpenAI Compatible (Generic)</option>
+                    </select>
                 </div>
 
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight:bold; display:block; margin-bottom:5px;">Base URL:</label>
+                    <input type="text" id="set-ai-base-url" value="${aiBaseUrl}" placeholder="http://localhost:11434/v1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <p style="font-size:0.8em; color:#888; margin-top:4px;">For Ollama: <code>http://localhost:11434/v1</code><br>For LM Studio: <code>http://localhost:1234/v1</code></p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight:bold; display:block; margin-bottom:5px;">API Key:</label>
+                    <input type="password" id="set-ai-api-key" value="${aiApiKey}" placeholder="sk-..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <p style="font-size:0.8em; color:#888; margin-top:4px;">Leave as 'ollama' for local use. Required for OpenRouter/DeepSeek etc.</p>
+                </div>
+                
                 <div style="border-top: 1px solid #eee; padding-top: 15px;">
-                    <label style="font-weight:bold; display:block; margin-bottom:5px;">Google Connection:</label>
-                    <button id="btn-reauth" style="background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
-                        ⚠️ Force Re-Authentication
+                     <label style="font-weight:bold; display:block; margin-bottom:5px;">Google Connection:</label>
+                     <button id="btn-reauth" style="background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                        🔄 Re-Authenticate Google
                     </button>
-                    <p style="font-size: 0.8em; color: #888; margin-top: 5px;">Click this if emails stop syncing. It will launch the Google login popup again.</p>
+                    <p style="font-size: 0.8em; color: #888; margin-top: 5px;">Click if syncing stops.</p>
                 </div>
             </div>
 
