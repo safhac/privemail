@@ -3,7 +3,7 @@ import sys
 import httpx
 import ollama
 from typing import List
-from .base import client, OLLAMA_LOCK
+from .base import AI_LOCK, _get_config
 from .system import check_model_compatibility
 from models.schemas import ModelItem
 
