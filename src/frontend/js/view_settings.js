@@ -2,17 +2,20 @@ import * as apiClient from './api_client.js';
 
 export async function renderSettingsView(container) {
     container.innerHTML = '<h2>Loading Settings...</h2>';
-    
-    const settings = await apiClient.fetchSettings(); 
-    
+
+    const settings = await apiClient.fetchSettings();
+
     // Default values
-    const scanInterval = settings.scan_interval ? parseInt(settings.scan_interval) / 60 : 5; 
+    const scanInterval = settings.scan_interval ? parseInt(settings.scan_interval) / 60 : 5;
     const systemPrompt = settings.system_prompt_template || "You are a professional email assistant. Draft a reply based on the user's goal.";
     const licenseKey = settings.license_key || "";
-    
+
     const isPaused = settings.scheduler_paused === 'true';
     const isManualMode = settings.manual_mode === 'true';
-    const includeSig = settings.include_signature !== 'false'; // Default true
+    const includeSig = settings.include_signature !== 'false';
+    const aiProvider = settings.ai_provider || "ollama";
+    const aiBaseUrl = settings.ai_base_url || "http://localhost:11434/v1";
+    const aiApiKey = settings.ai_api_key || "ollama";
 
     let html = `
         <div class="settings-container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
@@ -104,17 +107,17 @@ export async function renderSettingsView(container) {
     container.innerHTML = html;
 
     // --- WIRE UP BUTTONS ---
-    
+
     const btnPause = document.getElementById('btn-toggle-pause');
     btnPause.onclick = async () => {
         const currentlyPaused = btnPause.textContent.includes('PAUSED');
-        const newState = !currentlyPaused; 
-        
+        const newState = !currentlyPaused;
+
         btnPause.textContent = "Saving...";
-        
+
         try {
             await fetch(`/api/settings/pause?enabled=${newState}`, { method: 'POST' });
-            
+
             if (newState) {
                 btnPause.textContent = "⏸ PAUSED";
                 btnPause.style.cssText = "padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; background:#fbbf24; color:#78350f;";
@@ -122,7 +125,7 @@ export async function renderSettingsView(container) {
                 btnPause.textContent = "▶ RUNNING";
                 btnPause.style.cssText = "padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; background:#e5e7eb; color:#374151;";
             }
-        } catch(e) {
+        } catch (e) {
             alert("Failed to update pause state");
         }
     };
@@ -160,7 +163,7 @@ export async function renderSettingsView(container) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ settings: updates })
             });
-            
+
             btn.textContent = "Saved!";
             btn.style.backgroundColor = "#059669";
             setTimeout(() => {
@@ -177,8 +180,8 @@ export async function renderSettingsView(container) {
     };
 
     document.getElementById('btn-reauth').onclick = () => {
-        if(confirm("This will disconnect your current session and ask you to login to Google again. Continue?")) {
-             alert("Please restart the application to trigger the Google Login flow.");
+        if (confirm("This will disconnect your current session and ask you to login to Google again. Continue?")) {
+            alert("Please restart the application to trigger the Google Login flow.");
         }
     };
 }
