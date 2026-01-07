@@ -8,7 +8,7 @@ from pydantic import BaseModel
 # Import core components
 from database import db, db_manager
 from clients import google as google_client
-from clients import ollama as ollama_client
+from clients import ai_engine as ollama_client
 from core.config import SETUP_COMPLETE_FLAG_PATH, DEFAULT_OLLAMA_MODEL
 from scheduler import _set_setting
 # FIX: Import get_data_dir
@@ -20,26 +20,29 @@ router = APIRouter(prefix="/setup", tags=["Setup"])
 DATA_DIR = get_data_dir()
 SECRETS_FILE = DATA_DIR / "secrets.json"
 
+
 class SetupInitRequest(BaseModel):
     master_password: str
     model_name: str
+
 
 @router.get("/status")
 async def get_setup_status():
     # FIX: Check token in DATA_DIR
     token_path = DATA_DIR / "token.json"
-    
+
     # Check setup flag in DATA_DIR
     setup_flag = DATA_DIR / ".setup_complete"
-    
+
     google_token_exists = token_path.exists()
     ollama_running = await ollama_client.check_ollama_status()
-    
+
     return {
         "google_connected": google_token_exists,
         "ollama_running": ollama_running,
         "setup_complete": setup_flag.exists()
     }
+
 
 @router.get("/auth")
 def trigger_auth_flow():
@@ -49,6 +52,7 @@ def trigger_auth_flow():
         return {"status": "already_connected"}
     else:
         return {"status": "flow_started"}
+
 
 @router.post("/complete")
 def complete_setup(request: SetupInitRequest):
@@ -61,23 +65,23 @@ def complete_setup(request: SetupInitRequest):
         # 2. Save Master Password
         with open(SECRETS_FILE, "w") as f:
             json.dump({"master_password": request.master_password}, f)
-        
+
         # 3. Initialize Database & Encryption
         # (db.py now uses get_data_dir internally, so this is safe)
         db.create_db_and_tables()
         db_manager.initialize_encryption(request.master_password)
-        
+
         # 4. Save Settings to DB
         session = db.SessionLocal()
         try:
             _set_setting(session, "ollama_model", request.model_name)
-            _set_setting(session, "scan_interval", "300") 
+            _set_setting(session, "scan_interval", "300")
         finally:
             session.close()
 
         # 5. Mark Setup as Complete in DATA_DIR
         (DATA_DIR / ".setup_complete").touch()
-        
+
         logging.info("SETUP: Setup process finished successfully.")
         return {"status": "success"}
 
