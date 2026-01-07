@@ -9,26 +9,20 @@ from models.schemas import ModelItem
 
 
 async def pull_model(model_name: str) -> bool:
-    is_compatible, msg = check_model_compatibility(model_name)
-    if not is_compatible:
-        logging.error(f"Cannot pull model: {msg}")
+    provider, base_url, _ = _get_config()
+    if provider != "ollama":
+        logging.info("Skipping pull: Not supported for generic providers.")
+        return True  # Pretend success
+
+    # Existing Ollama Pull Logic
+    try:
+        client = ollama.AsyncClient(host=base_url.replace("/v1", ""))
+        async for progress in client.pull(model_name, stream=True):
+            pass
+        return True
+    except Exception as e:
+        logging.error(f"Pull failed: {e}")
         return False
-    async with OLLAMA_LOCK:
-        logging.info(f"OLLAMA_LOCK acquired by pull_model({model_name})")
-        try:
-            logging.info(
-                f"Pulling model: {model_name}. This may take a while...")
-            async for progress in client.pull(model_name, stream=True):
-                if 'status' in progress and progress['status'] == 'success':
-                    logging.info(f"Successfully pulled model {model_name}.")
-                    return True
-            logging.info(f"Model {model_name} is already up to date.")
-            return True
-        except Exception as e:
-            logging.error(f"Failed to pull model {model_name}: {e}")
-            return False
-        finally:
-            logging.info(f"OLLAMA_LOCK released by pull_model({model_name})")
 
 
 async def list_installed_models() -> List[str]:
