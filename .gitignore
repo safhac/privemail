@@ -25,6 +25,7 @@ dist/
 Output/
 privemail.spec.old
 setup_assets/
+scripts/
 
 # licensing
 admin_keygen.py
@@ -41,11 +42,6 @@ apps/legal_duck/docs/*.docx
 
 # local builds
 
-concatenated_source.txt
-frontend.txt
 reset_env.bat
 build.ps1
-concatenate_project_files.py
-publish_privemail.py
 setup_sim.py
-migrate_structure.py
