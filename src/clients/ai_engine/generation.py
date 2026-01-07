@@ -78,7 +78,7 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
     async with OLLAMA_LOCK:
         logging.info("OLLAMA_LOCK acquired by analyze_correspondent()")
         try:
-            response = await client.chat(
+            response = await chat_completion(
                 model=DEFAULT_OLLAMA_MODEL,
                 messages=[
                     {'role': 'system', 'content': system_prompt},
