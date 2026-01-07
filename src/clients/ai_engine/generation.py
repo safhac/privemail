@@ -41,7 +41,7 @@ async def rewrite_paragraph_for_tone(
     paragraph: str,
     model: str = DEFAULT_OLLAMA_MODEL
 ) -> str:
-    async with OLLAMA_LOCK:
+    async with AI_LOCK:
         logging.info(f"OLLAMA_LOCK acquired by rewrite_paragraph_for_tone()")
         try:
             response = await client.chat(
