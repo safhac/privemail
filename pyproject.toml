@@ -13,7 +13,8 @@ dependencies = [
     "ollama",
     "vobject",
     "requests",
-    "httpx"
+    "httpx",
+    "python-multipart>=0.0.21",
 ]
 
 [tool.uv]
