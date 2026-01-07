@@ -163,3 +163,22 @@ async def generate_draft_reply(
             return f"Error generating draft: {e}"
         finally:
             logging.info("OLLAMA_LOCK released by generate_draft_reply()")
+
+
+async def unload_model(model_name: str):
+    """
+    Tells the AI engine to free the model from RAM.
+    Only works for Ollama (using keep_alive=0).
+    """
+    provider, base_url, _ = _get_config()
+
+    if provider == "ollama":
+        try:
+            # To unload in Ollama, send an empty request with keep_alive=0
+            client = ollama.AsyncClient(host=base_url.replace("/v1", ""))
+            await client.chat(model=model_name, messages=[], keep_alive=0)
+        except Exception as e:
+            logging.error(f"Failed to unload model: {e}")
+    else:
+        # Generic OpenAI APIs usually handle memory management server-side
+        pass
