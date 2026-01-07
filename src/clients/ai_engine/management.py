@@ -1,5 +1,7 @@
 import logging
 import sys
+import httpx
+import ollama
 from typing import List
 from .base import client, OLLAMA_LOCK
 from .system import check_model_compatibility
