@@ -8,9 +8,7 @@ a = Analysis(
     pathex=['src', '.'],             # CHANGED: Add src to path
     binaries=[],
     datas=[
-        ('src/frontend', 'frontend'), # CHANGED: Frontend is inside src
-        # If app_data is in the root, keep it as is. If it's in src, change to 'src/app_data'
-        ('app_data', 'app_data'),     
+        ('src/frontend', 'frontend'),
     ],
     hiddenimports=[
         'uvicorn.loops.auto',
