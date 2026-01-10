@@ -16,11 +16,11 @@ needed_imports = [
 ]
 
 a = Analysis(
-    ['src\\launcher.py'],           # CHANGED: Point to launcher inside src
+    ['src/launcher.py'],           # CHANGED: Point to launcher inside src
     pathex=['src'],                 # CHANGED: Add src to path so imports work
     binaries=[],
     datas=[
-        ('src\\frontend', 'frontend'), # CHANGED: Source is now src/frontend, Dest stays frontend
+        ('src/frontend', 'frontend'), # CHANGED: Source is now src/frontend, Dest stays frontend
     ],
     hiddenimports=needed_imports,
     hookspath=[],
