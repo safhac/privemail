@@ -4,13 +4,13 @@
 block_cipher = None
 
 a = Analysis(
-    ['apps/privemail/launcher.py'], # Updated path
-    pathex=['apps/privemail', '.'], # Added path for the new structure
+    ['src/launcher.py'],             # CHANGED: Point to src instead of apps/privemail
+    pathex=['src', '.'],             # CHANGED: Add src to path
     binaries=[],
     datas=[
-        ('frontend', 'frontend'),
-        ('app_data', 'app_data'), 
-        # Add any other data folders here
+        ('src/frontend', 'frontend'), # CHANGED: Frontend is inside src
+        # If app_data is in the root, keep it as is. If it's in src, change to 'src/app_data'
+        ('app_data', 'app_data'),     
     ],
     hiddenimports=[
         'uvicorn.loops.auto',
