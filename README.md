@@ -11,7 +11,9 @@ Privemail runs entirely on your machine. It connects to Gmail, downloads your me
 ### 📥 Download & Support
 **Not a developer?** You can support the project by purchasing the pre-compiled installer. It includes everything pre-configured (no Python or terminal required).
 
-[ **Download Installer for Windows/Mac ($10)** ](https://your-website-link-here)
+[ **Download Installer for Windows ($10)** ](https://safhacster.gumroad.com/l/bnnpg)
+
+[ **Download Installer for Mac ($10)** ](https://safhacster.gumroad.com/l/kxwfcv)
 
 *Building from source is free (see below).*
 
