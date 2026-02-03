@@ -44,6 +44,7 @@ class Email(Base):
     correspondent_goal = Column(Text, nullable=True)
     correspondent_evidence = Column(Text, nullable=True)
     local_priority_score = Column(Float, default=0.0, index=True)
+    provider = Column(String, default="gmail", index=True)
     drafts = relationship("Draft", back_populates="email")
 
 class Draft(Base):
@@ -54,6 +55,7 @@ class Draft(Base):
     final_text = Column(EncryptedText)
     status = Column(String)
     is_read_and_confirmed = Column(Boolean, default=False, nullable=False)
+    provider = Column(String, default="gmail")
     email = relationship("Email", back_populates="drafts")
 
 class Group(Base):
@@ -73,12 +75,13 @@ class Contact(Base):
     name = Column(String, nullable=True)
     group_id = Column(Integer, ForeignKey("groups.id"), nullable=True)
     group = relationship("Group", back_populates="contacts")
-    contact_group = Column(Text, nullable=True) 
+    contact_group = Column(Text, nullable=True)
     tone = Column(Text, nullable=True)
     tone_strength = Column(Float, nullable=True)
     goal = Column(Text, nullable=True)
     auto_draft_enabled = Column(Boolean, default=True, nullable=False)
     style_sample_text = Column(EncryptedText, nullable=True)
+    source_providers = Column(Text, default='["google"]')
 
 class Setting(Base):
     __tablename__ = "settings"
