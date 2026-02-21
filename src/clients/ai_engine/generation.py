@@ -1,7 +1,7 @@
 import json
 import logging
 from typing import Dict, Any
-from .base import chat_completion, AI_LOCK, _get_config
+from .base import chat_completion, AI_LOCK, _get_config, client
 import ollama
 from models.schemas import GenerationRequest
 from database.db import Contact
