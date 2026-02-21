@@ -37,7 +37,7 @@ async def generate_text(request: GenerationRequest) -> str:
             logging.info(f"OLLAMA_LOCK released by generate_text()")
 
 
-async def rewrite_paragraph_for_to(
+async def rewrite_paragraph_for_tone(
     system_prompt: str,
     paragraph: str,
     model: str = DEFAULT_OLLAMA_MODEL
