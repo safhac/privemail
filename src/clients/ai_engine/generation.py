@@ -1,6 +1,7 @@
 import json
 import logging
 from typing import Dict, Any
+# client: the shared AsyncClient instance for Ollama API calls
 from .base import chat_completion, AI_LOCK, _get_config, client
 import ollama
 from models.schemas import GenerationRequest
@@ -176,8 +177,8 @@ async def unload_model(model_name: str):
     if provider == "ollama":
         try:
             # To unload in Ollama, send an empty request with keep_alive=0
-            client = ollama.AsyncClient(host=base_url.replace("/v1", ""))
-            await client.chat(model=model_name, messages=[], keep_alive=0)
+            local_client = ollama.AsyncClient(host=base_url.replace("/v1", ""))
+            await local_client.chat(model=model_name, messages=[], keep_alive=0)
         except Exception as e:
             logging.error(f"Failed to unload model: {e}")
     else:
