@@ -182,5 +182,4 @@ async def unload_model(model_name: str):
         except Exception as e:
             logging.error(f"Failed to unload model: {e}")
     else:
-        # Generic OpenAI APIs usually handle memory management server-side
         pass
