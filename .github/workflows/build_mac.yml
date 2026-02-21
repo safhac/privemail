@@ -2,7 +2,7 @@ name: Build Mac App
 
 on:
   push:
-    branches: [ "fix/windows-installer" ]
+    branches: [ "master" ]
 
 jobs:
   build-mac:
