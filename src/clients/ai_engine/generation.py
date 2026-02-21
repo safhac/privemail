@@ -19,8 +19,8 @@ async def generate_text(request: GenerationRequest) -> str:
     
     Refine the following text based *only* on these rules.
     """
-    async with OLLAMA_LOCK:
-        logging.info(f"OLLAMA_LOCK acquired by generate_text()")
+    async with AI_LOCK:
+        logging.info(f"AI_LOCK acquired by generate_text()")
         try:
             response = await client.chat(
                 model=request.model_name,
@@ -34,7 +34,7 @@ async def generate_text(request: GenerationRequest) -> str:
             logging.error(f"Error generating text: {e}")
             return f"Error generating text: {str(e)}"
         finally:
-            logging.info(f"OLLAMA_LOCK released by generate_text()")
+            logging.info(f"AI_LOCK released by generate_text()")
 
 
 async def rewrite_paragraph_for_tone(
@@ -43,7 +43,7 @@ async def rewrite_paragraph_for_tone(
     model: str = DEFAULT_OLLAMA_MODEL
 ) -> str:
     async with AI_LOCK:
-        logging.info(f"OLLAMA_LOCK acquired by rewrite_paragraph_for_tone()")
+        logging.info(f"AI_LOCK acquired by rewrite_paragraph_for_tone()")
         try:
             response = await client.chat(
                 model=model,
@@ -58,7 +58,7 @@ async def rewrite_paragraph_for_tone(
             return f"Error rewriting text: {str(e)}"
         finally:
             logging.info(
-                f"OLLAMA_LOCK released by rewrite_paragraph_for_tone()")
+                f"AI_LOCK released by rewrite_paragraph_for_tone()")
 
 
 async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
@@ -77,7 +77,7 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
         "correspondent_evidence": "Could not parse LLM response"
     }
     async with AI_LOCK:
-        logging.info("OLLAMA_LOCK acquired by analyze_correspondent()")
+        logging.info("AI_LOCK acquired by analyze_correspondent()")
         try:
             response = await chat_completion(
                 model=DEFAULT_OLLAMA_MODEL,
@@ -106,7 +106,7 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
             logging.error(f"Error in analyze_correspondent: {e}")
             return default_response
         finally:
-            logging.info("OLLAMA_LOCK released by analyze_correspondent()")
+            logging.info("AI_LOCK released by analyze_correspondent()")
 
 
 async def generate_draft_reply(
@@ -147,8 +147,8 @@ async def generate_draft_reply(
     ---
     """
 
-    async with OLLAMA_LOCK:
-        logging.info("OLLAMA_LOCK acquired by generate_draft_reply()")
+    async with AI_LOCK:
+        logging.info("AI_LOCK acquired by generate_draft_reply()")
         try:
             response = await client.chat(
                 model=DEFAULT_OLLAMA_MODEL,
@@ -163,7 +163,7 @@ async def generate_draft_reply(
             logging.error(f"Error in generate_draft_reply: {e}")
             return f"Error generating draft: {e}"
         finally:
-            logging.info("OLLAMA_LOCK released by generate_draft_reply()")
+            logging.info("AI_LOCK released by generate_draft_reply()")
 
 
 async def unload_model(model_name: str):
