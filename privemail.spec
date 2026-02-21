@@ -2,7 +2,7 @@
 
 block_cipher = None
 
-# We define this list here to avoid syntax errors inside the Analysis block
+# Imports needed for uvicorn/engineio to work correctly in the frozen executable
 needed_imports = [
     'uvicorn.logging',
     'uvicorn.loops',
@@ -16,11 +16,11 @@ needed_imports = [
 ]
 
 a = Analysis(
-    ['launcher.py'],
-    pathex=[],
+    ['src/launcher.py'],           # CHANGED: Point to launcher inside src
+    pathex=['src'],                 # CHANGED: Add src to path so imports work
     binaries=[],
     datas=[
-        ('frontend', 'frontend'),
+        ('src/frontend', 'frontend'), # CHANGED: Source is now src/frontend, Dest stays frontend
     ],
     hiddenimports=needed_imports,
     hookspath=[],
@@ -44,7 +44,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
+    console=True,                 # Keep True for debugging, set False for GUI-only
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,

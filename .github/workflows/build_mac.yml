@@ -1,0 +1,35 @@
+name: Build Mac App
+
+on:
+  push:
+    branches: [ "fix/windows-installer" ]
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Build with PyInstaller
+      run: uv run pyinstaller privemail_mac.spec --clean
+
+    # Optional: Create a DMG (disk image)
+    - name: Create DMG
+      run: |
+        npm install -g appdmg
+        # You'll need a simple json config for appdmg, or just zip the .app
+        # For now, let's just zip the .app
+        cd dist
+        zip -r Privemail_Mac.zip Privemail.app
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mac-build
+        path: dist/Privemail_Mac.zip
