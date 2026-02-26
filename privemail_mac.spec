@@ -40,7 +40,7 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=False,
     console=False, # Set to False for a GUI app (hides terminal)
     disable_windowed_traceback=False,
     argv_emulation=True, # Critical for Mac to handle app launch events
@@ -57,7 +57,7 @@ coll = COLLECT(
     a.zipfiles,
     a.datas,
     strip=False,
-    upx=True,
+    upx=False,
     upx_exclude=[],
     name='Privemail',
 )

@@ -1,6 +1,6 @@
 ; Script generated for Inno Setup
 #define MyAppName "Privemail"
-#define MyAppVersion "1.1" 
+#define MyAppVersion "1.2" 
 #define MyAppPublisher "Privemail Inc"
 #define MyAppExeName "Privemail.exe"
 
@@ -12,7 +12,7 @@ AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
 WizardStyle=modern
-OutputBaseFilename=Privemail_Setup_v1.1
+OutputBaseFilename=Privemail_Setup_v1.2
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64compatible
