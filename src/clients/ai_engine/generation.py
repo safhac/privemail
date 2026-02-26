@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Dict, Any
 # client: the shared AsyncClient instance for Ollama API calls
-from .base import chat_completion, AI_LOCK, _get_config, client
+from .base import chat_completion, AI_LOCK, _get_config
 import ollama
 from models.schemas import GenerationRequest
 from database.db import Contact
@@ -23,7 +23,7 @@ async def generate_text(request: GenerationRequest) -> str:
     async with AI_LOCK:
         logging.info(f"AI_LOCK acquired by generate_text()")
         try:
-            response = await client.chat(
+            response = await chat_completion(
                 model=request.model_name,
                 messages=[
                     {'role': 'system', 'content': system_prompt},
@@ -46,7 +46,7 @@ async def rewrite_paragraph_for_tone(
     async with AI_LOCK:
         logging.info(f"AI_LOCK acquired by rewrite_paragraph_for_tone()")
         try:
-            response = await client.chat(
+            response = await chat_completion(
                 model=model,
                 messages=[
                     {'role': 'system', 'content': system_prompt},
@@ -87,7 +87,7 @@ async def analyze_correspondent(email_body: str) -> Dict[str, Any]:
                     {'role': 'user', 'content': email_body}
                 ],
                 options={"temperature": 0.0},
-                format="json"
+                json_mode=True
             )
             raw_response = response['message']['content']
             logging.info(
@@ -151,7 +151,7 @@ async def generate_draft_reply(
     async with AI_LOCK:
         logging.info("AI_LOCK acquired by generate_draft_reply()")
         try:
-            response = await client.chat(
+            response = await chat_completion(
                 model=DEFAULT_OLLAMA_MODEL,
                 messages=[
                     {'role': 'system', 'content': system_prompt},
