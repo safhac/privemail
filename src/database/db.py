@@ -28,10 +28,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 class Base(DeclarativeBase):
     pass
 
-# ... (Rest of your models: Email, Draft, Group, Contact, Setting remain unchanged) ...
-# Copy the rest of your existing db.py file here starting from class Email(Base):
-# or I can provide the full file if you prefer.
-
 class Email(Base):
     __tablename__ = "emails"
     id = Column(Integer, primary_key=True, index=True)
@@ -86,6 +82,10 @@ class Setting(Base):
     value = Column(String)
 
 def create_db_and_tables():
+    # Explicitly reference all models so they are registered with Base.metadata
+    # before create_all() runs. If any model class is not imported here it will
+    # be absent from the metadata and its table will not be created.
+    _ = (Email, Draft, Group, Contact, Setting)  # noqa: F841
     try:
         logging.info(f"Attempting to create database tables at {DB_PATH}...")
         Base.metadata.create_all(bind=engine)

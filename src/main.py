@@ -69,18 +69,22 @@ async def lifespan(app: FastAPI):
     
     # 1. Start external services
     service_manager.auto_start_services()
-    
-    # 2. Check if Setup is Done
+
+    # 2. Always create DB tables on startup (idempotent).
+    # Must run unconditionally so the settings table exists before any
+    # request handler queries it — including during first-time setup.
+    db.create_db_and_tables()
+
+    # 3. Check if Setup is Done
     # FIX: Check flag in DATA_DIR
     setup_flag_path = DATA_DIR / ".setup_complete"
-    
+
     if setup_flag_path.exists() and MASTER_PASSWORD:
         logging.info("Setup complete. Initializing Core Services.")
-        
-        # Initialize DB & Encryption
-        db.create_db_and_tables()
+
+        # Initialize Encryption
         db_manager.initialize_encryption(MASTER_PASSWORD)
-        
+
         # Start Scheduler
         scheduler.start_scheduler_if_needed()
     else:
