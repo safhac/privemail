@@ -51,7 +51,7 @@ def trigger_auth_flow():
         raise HTTPException(
             status_code=503,
             detail=(
-                f"credentials.json is missing from the application directory "
+                f"credentials.json is missing from the user data directory "
                 f"({google_client.CREDENTIALS_FILE}). "
                 "Please place your Google OAuth credentials file there and restart the app."
             ),

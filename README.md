@@ -57,19 +57,39 @@ This project uses a standard `src` layout:
     ```
     *(This command will automatically create the virtual environment, install all dependencies, and launch the app in one step.)*
 
-## 🔑 Configuration (Google OAuth)
+## 🔑 Google OAuth Setup
 
-To access your Gmail, you need a `credentials.json` file from Google Cloud.
+Privemail connects to Gmail using a Google Cloud OAuth credential file. You need to create this file once.
 
-1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2.  Create a project and enable the **Gmail API** and **People API**.
-3.  Configure the OAuth Consent Screen (Add `http://localhost:8080/` as a Redirect URI).
-4.  Create Credentials (**OAuth Client ID** -> **Desktop App**).
-5.  Download the JSON file, rename it to `credentials.json`, and place it in the **`src/`** folder.
+### Step 1 — Create credentials.json
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and sign in.
+2. Create a new project (or select an existing one).
+3. Enable two APIs: **Gmail API** and **People API** (search for each under *APIs & Services → Library*).
+4. Go to *APIs & Services → OAuth Consent Screen*. Set it to **External**, fill in the app name.
+5. Go to *APIs & Services → Credentials → Create Credentials → OAuth Client ID*.
+6. Choose **Desktop App** as the application type.
+7. Click **Download JSON**. Rename the downloaded file to `credentials.json`.
+
+### Step 2 — Place credentials.json in the right folder
+
+Where you put the file depends on how you are running Privemail:
+
+| How you run Privemail | Where to put `credentials.json` |
+|---|---|
+| **Windows installer** (downloaded from Gumroad) | `C:\Users\YOUR_NAME\AppData\Roaming\Privemail\` |
+| **Mac installer** (downloaded from Gumroad) | `~/Library/Application Support/Privemail/` |
+| **Running from source** (developers) | `src/app_data/` inside the project folder |
+
+> **Windows tip:** Press `Win + R`, type `%APPDATA%\Privemail` and press Enter to open the folder directly. If the folder does not exist yet, run the app once and it will be created automatically.
+
+After placing the file, restart the app. The setup wizard will guide you through the Google sign-in.
+
+---
 
 ## ▶️ Usage
 
-1.  Run `uv run src/launcher.py`.
-2.  The browser will open automatically.
-3.  Go to **Settings** to configure your AI Provider (Ollama is default).
-4.  On first run, you will be prompted to log in to Google to sync emails.
+1.  Run `uv run src/launcher.py` (source) or launch the installed app.
+2.  The browser will open automatically to the setup wizard.
+3.  Follow the wizard: set a password → authorize Google → select an AI model.
+4.  On subsequent launches, the app opens directly to your inbox.
