@@ -21,7 +21,6 @@ a = Analysis(
     binaries=[],
     datas=[
         ('src/frontend', 'frontend'), # CHANGED: Source is now src/frontend, Dest stays frontend
-        ('src/credentials.json', '.'),  # Bundle OAuth credentials with the executable
     ],
     hiddenimports=needed_imports,
     hookspath=[],
