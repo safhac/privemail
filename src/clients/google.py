@@ -116,7 +116,10 @@ def get_gmail_service():
 
     if not creds:
         if not CREDENTIALS_FILE.exists():
-            logging.error(f"CRITICAL: '{CREDENTIALS_FILE}' not found. Cannot authenticate.")
+            logging.error(
+                f"CRITICAL: credentials.json not found at '{CREDENTIALS_FILE}'. "
+                "Place your Google OAuth credentials file there and restart the app."
+            )
             return None
 
         try:

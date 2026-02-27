@@ -47,6 +47,15 @@ async def get_setup_status():
 @router.get("/auth")
 def trigger_auth_flow():
     """Forces the Google Auth flow to start on the server."""
+    if not google_client.CREDENTIALS_FILE.exists():
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"credentials.json is missing from the application directory "
+                f"({google_client.CREDENTIALS_FILE}). "
+                "Please place your Google OAuth credentials file there and restart the app."
+            ),
+        )
     service = google_client.get_gmail_service()
     if service:
         return {"status": "already_connected"}
