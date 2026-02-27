@@ -40,12 +40,30 @@
 
     <div id="step-3" class="step">
         <h1>Connect Gmail</h1>
-        <p>We need to authorize Privemail to access your Gmail account.</p>
+        <p>Privemail needs a <strong>credentials.json</strong> file from Google Cloud to access your Gmail.</p>
+
+        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; padding: 14px; margin-bottom: 16px; font-size: 0.88em; line-height: 1.6; color: #0369a1;">
+            <strong>Before clicking Authorize:</strong>
+            <ol style="margin: 8px 0 0 16px; padding: 0;">
+                <li>Go to <a href="https://console.cloud.google.com/" target="_blank" style="color:#0369a1;">console.cloud.google.com</a> and create an OAuth Client ID (Desktop App type).</li>
+                <li>Download the JSON file and rename it to <code>credentials.json</code>.</li>
+                <li>Place it in your Privemail data folder:
+                    <ul style="margin: 4px 0 0 16px;">
+                        <li><strong>Windows installer:</strong> <code>%APPDATA%\Privemail\</code></li>
+                        <li><strong>Mac installer:</strong> <code>~/Library/Application Support/Privemail/</code></li>
+                        <li><strong>Running from source:</strong> <code>src/app_data/</code></li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div id="auth-error" style="display:none; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:12px; margin-bottom:14px; font-size:0.88em; color:#b91c1c;"></div>
+
         <p style="background: #fff7ed; color: #c2410c; padding: 10px; border-radius: 4px; font-size: 0.9em;">
-            ⚠️ A browser window will open. Please sign in and verify permissions.
+            ⚠️ A browser window will open after you click Authorize. Sign in and approve permissions.
         </p>
         <button onclick="triggerGoogleAuth()" id="btn-auth">Authorize Google</button>
-        <button class="secondary-btn" onclick="nextStep(4)">Skip (I have token.json)</button>
+        <button class="secondary-btn" onclick="nextStep(4)">Skip (I already have token.json)</button>
     </div>
 
     <div id="step-4" class="step">
@@ -81,33 +99,51 @@
 
     async function triggerGoogleAuth() {
         const btn = document.getElementById('btn-auth');
+        const errBox = document.getElementById('auth-error');
+        errBox.style.display = 'none';
         btn.textContent = "Waiting for Google...";
         btn.disabled = true;
-        
-        // We trigger a fetch to a protected endpoint or just check status
-        // Since the auth flow is backend-driven by missing token, we hit the inbox API
-        // which will trigger the browser popup on the server side.
+
         try {
-            // This call is expected to "fail" or hang while browser opens
-            fetch('/api/setup/auth').catch(e => console.log("Auth triggered"));
-            
-            // Poll for token file existence
+            const authRes = await fetch('/api/setup/auth');
+
+            if (!authRes.ok) {
+                // Surface server errors (e.g. 503 = credentials.json missing)
+                let detail = `Server error ${authRes.status}.`;
+                try { detail = (await authRes.json()).detail; } catch(_) {}
+                errBox.textContent = detail;
+                errBox.style.display = 'block';
+                btn.textContent = "Retry";
+                btn.disabled = false;
+                return;
+            }
+
+            // Auth flow started — poll for token
             let checks = 0;
             const interval = setInterval(async () => {
                 const res = await fetch('/api/setup/status');
                 const data = await res.json();
-                if(data.google_connected) {
+                if (data.google_connected) {
                     clearInterval(interval);
                     btn.textContent = "Connected!";
                     btn.style.background = "#10b981";
                     setTimeout(() => nextStep(4), 1000);
                 }
                 checks++;
-                if(checks > 60) { clearInterval(interval); btn.textContent = "Retry"; btn.disabled = false; }
+                if (checks > 60) {
+                    clearInterval(interval);
+                    errBox.textContent = "Timed out waiting for Google sign-in. Please try again.";
+                    errBox.style.display = 'block';
+                    btn.textContent = "Retry";
+                    btn.disabled = false;
+                }
             }, 2000);
 
         } catch(e) {
-            console.error(e);
+            errBox.textContent = "Could not reach the Privemail server. Is the app still running?";
+            errBox.style.display = 'block';
+            btn.textContent = "Retry";
+            btn.disabled = false;
         }
     }
 
