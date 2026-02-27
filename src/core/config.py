@@ -1,8 +1,15 @@
 # src/core/config.py
 
 from pathlib import Path
+from core.path_utils import get_data_dir
 
-SETUP_COMPLETE_FLAG_PATH = Path("app_data/.setup_complete")
+def get_setup_complete_flag_path() -> Path:
+    """Returns the path to the setup complete flag."""
+    return get_data_dir() / ".setup_complete"
+
+# For backwards compatibility, compute at import time
+# (but this is now a function call instead of hardcoded path)
+SETUP_COMPLETE_FLAG_PATH = get_setup_complete_flag_path()
 
 
 # --- Default Model ---

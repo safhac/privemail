@@ -1,8 +1,11 @@
 import os
 import os.path
 import base64
+import sys
+import socket
+import webbrowser
 from typing import List, Dict, Any
-import logging 
+import logging
 import re
 from pathlib import Path
 from email.mime.text import MIMEText
@@ -12,7 +15,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from google.auth.exceptions import RefreshError 
+from google.auth.exceptions import RefreshError
 
 # FIX: Import get_data_dir
 from core.path_utils import get_app_root, get_data_dir
@@ -32,10 +35,53 @@ TOKEN_FILE = DATA_DIR / 'token.json'
 # Scopes
 SCOPES = [
     'https://www.googleapis.com/auth/gmail.readonly',
-    'https://www.googleapis.com/auth/gmail.compose', 
+    'https://www.googleapis.com/auth/gmail.compose',
     'https://www.googleapis.com/auth/gmail.send',
     'https://www.googleapis.com/auth/contacts.readonly'
 ]
+
+# --- HELPER FUNCTIONS ---
+
+def _is_port_available(port: int) -> bool:
+    """Check if a port is available on localhost."""
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        result = sock.connect_ex(('127.0.0.1', port))
+        sock.close()
+        return result != 0
+    except Exception:
+        return False
+
+def _find_available_port(start_port: int = 8080, max_attempts: int = 5) -> int:
+    """Find an available port starting from start_port. Returns the port or raises ValueError."""
+    for offset in range(max_attempts):
+        port = start_port + offset
+        if _is_port_available(port):
+            return port
+    raise ValueError(f"Could not find available port in range {start_port}-{start_port + max_attempts - 1}")
+
+def _open_browser_for_oauth(url: str) -> None:
+    """
+    Open browser for OAuth flow with extra handling for frozen executables.
+    """
+    try:
+        logging.info(f"Opening browser to: {url}")
+        if getattr(sys, 'frozen', False):
+            # PyInstaller frozen executable - use explicit commands
+            import platform
+            if platform.system() == 'Windows':
+                os.startfile(url)
+            elif platform.system() == 'Darwin':
+                os.system(f'open "{url}"')
+            else:  # Linux
+                os.system(f'xdg-open "{url}"')
+        else:
+            # Development mode - use standard webbrowser
+            webbrowser.open(url)
+    except Exception as e:
+        logging.warning(f"Failed to open browser automatically: {e}")
+        logging.info(f"Please visit this URL manually: {url}")
 
 def get_gmail_service():
     """Authenticates and returns a Gmail API service client."""
@@ -72,20 +118,37 @@ def get_gmail_service():
         if not CREDENTIALS_FILE.exists():
             logging.error(f"CRITICAL: '{CREDENTIALS_FILE}' not found. Cannot authenticate.")
             return None
-            
+
         try:
+            # Find an available port (with fallback from 8080)
+            oauth_port = _find_available_port(start_port=8080, max_attempts=5)
+            logging.info(f"Using port {oauth_port} for OAuth callback")
+
+            # Create flow with dynamic port
             flow = InstalledAppFlow.from_client_secrets_file(
-                str(CREDENTIALS_FILE), SCOPES, redirect_uri='http://localhost:8080'
+                str(CREDENTIALS_FILE), SCOPES, redirect_uri=f'http://localhost:{oauth_port}'
             )
-            
-            logging.info("Starting local server for OAuth flow. Your browser should open.")
-            creds = flow.run_local_server(port=8080)
-            
+
+            logging.info(f"Starting OAuth flow on port {oauth_port}. Attempting to open browser...")
+
+            # Prepare OAuth URL
+            auth_url, _ = flow.authorization_url()
+            _open_browser_for_oauth(auth_url)
+
+            # Run local server and handle callback
+            creds = flow.run_local_server(
+                port=oauth_port,
+                open_browser=False
+            )
+
             # Save token to Writable Directory
             with open(TOKEN_FILE, 'w') as token:
                 token.write(creds.to_json())
                 logging.info(f"New token saved successfully to {TOKEN_FILE}")
-                
+
+        except ValueError as e:
+            logging.error(f"OAuth port error: {e}. All fallback ports in use.")
+            return None
         except Exception as e:
             logging.error(f"OAuth flow failed: {e}")
             return None
