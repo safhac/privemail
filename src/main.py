@@ -128,7 +128,8 @@ async def root():
     if setup_flag_path.exists() and MASTER_PASSWORD is None:
         load_secrets()
     
-    if setup_flag_path.exists() and MASTER_PASSWORD:
+    token_path = DATA_DIR / "token.json"
+    if setup_flag_path.exists() and MASTER_PASSWORD and token_path.exists():
         return FileResponse(FRONTEND_DIR / "app.html")
     else:
         return FileResponse(FRONTEND_DIR / "index.html")

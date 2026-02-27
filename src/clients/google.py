@@ -26,10 +26,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 BASE_DIR = get_app_root()
 DATA_DIR = get_data_dir()
 
-# Credentials (Read-Only) stay with the app
-CREDENTIALS_FILE = BASE_DIR / 'credentials.json'
-
-# Token (Writable) moves to AppData
+# Both credentials and token live in the writable user data directory (AppData)
+CREDENTIALS_FILE = DATA_DIR / 'credentials.json'
 TOKEN_FILE = DATA_DIR / 'token.json'
 
 # Scopes
