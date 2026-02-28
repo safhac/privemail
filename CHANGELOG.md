@@ -4,6 +4,16 @@ All notable changes to Privemail are documented here.
 
 ---
 
+## [1.3.0] – 2026-02-28
+
+### Bug Fixes
+
+- **Inbox not displaying emails (root cause):** The scheduler fetches all unread Gmail message IDs each run but was only ever checking `stubs[0]`. Once that first email (a LinkedIn no-reply) was archived locally, every subsequent run hit the "already in DB" early-return and processed nothing else. Fixed by iterating through all stubs to find the first one not yet in the database.
+- **Frontend 307 redirect on every inbox load:** `fetchInboxList` called `/api/inbox?page=N` (no trailing slash), causing an unnecessary 307 redirect on every page load. Fixed by adding the trailing slash to match the router's path exactly.
+- **Pending drafts always displayed as "Draft N":** The inbox sidebar used `item.draft_status` to distinguish pending vs ready drafts, but that field was never included in the `InboxItem` schema or the API query. Added `Draft.status` to the inbox query and `draft_status` to `InboxItem` so the correct label now renders.
+
+---
+
 ## [1.2.1] – 2026-02-27
 
 ### Summary
