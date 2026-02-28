@@ -30,7 +30,8 @@ def get_inbox_list(
                 Email.sender.label("correspondent"),
                 Email.subject,
                 Email.local_priority_score,
-                Draft.id.label("draft_id")
+                Draft.id.label("draft_id"),
+                Draft.status.label("draft_status")
             )
             .outerjoin(Draft, Email.id == Draft.email_id)
             # --- MODIFIED: Filter out 'archived_no_reply' AND 'replied' ---
@@ -51,6 +52,7 @@ def get_inbox_list(
                     subject=email.subject,
                     has_draft=(email.draft_id is not None),
                     draft_id=email.draft_id,
+                    draft_status=email.draft_status,
                     local_priority_score=email.local_priority_score or 0.0
                 )
             )

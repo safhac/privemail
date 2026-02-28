@@ -40,6 +40,7 @@ class InboxItem(BaseModel):
     subject: str
     has_draft: bool
     draft_id: Optional[int] = None
+    draft_status: Optional[str] = None
     local_priority_score: float = 0.0
 
 # --- MODIFIED: Group Schemas ---
