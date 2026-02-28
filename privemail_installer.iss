@@ -1,6 +1,6 @@
 ; Script generated for Inno Setup
 #define MyAppName "Privemail"
-#define MyAppVersion "1.2" 
+#define MyAppVersion "1.3"
 #define MyAppPublisher "Privemail Inc"
 #define MyAppExeName "Privemail.exe"
 
