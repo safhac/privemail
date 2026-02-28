@@ -61,13 +61,15 @@ async def async_email_fetch_job() -> bool:
 
         logging.info(f"SCHEDULER: Found {len(stubs)} new email(s).")
 
-        # Process one at a time
-        message_id = stubs[0]
+        # Find the first stub that hasn't been processed yet
+        message_id = None
+        for stub in stubs:
+            if not db.query(Email).filter(Email.message_id == stub).first():
+                message_id = stub
+                break
 
-        # Check DB first
-        existing_email = db.query(Email).filter(
-            Email.message_id == message_id).first()
-        if existing_email:
+        if message_id is None:
+            logging.info("SCHEDULER: All fetched emails already processed.")
             return True
 
         details = google_client.fetch_email_details(service, message_id)
