@@ -26,7 +26,7 @@ async function fetchAPI(url, options = {}) {
 }
 
 export async function fetchInboxList(page = 1) {
-    return fetchAPI(`${API_BASE_URL}/inbox?page=${page}`);
+    return fetchAPI(`${API_BASE_URL}/inbox/?page=${page}`);
 }
 
 export async function fetchModelList() {
